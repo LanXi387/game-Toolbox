@@ -4,27 +4,30 @@ import requests
 import tkinter as tk
 from tkinter import messagebox
 
+STEAM_SETUP = "SteamSetup.exe"
 
-def download_steam(local_filename="SteamSetup.exe"):
+
+def download_file(url, local_filename):
+    """
+    从指定 URL 下载文件并保存到本地文件
+    """
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+
+    with open(local_filename, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            f.write(chunk)
+
+    show_message("下载完成", f"下载完成：{local_filename}")
+
+
+def download_steam(local_filename=STEAM_SETUP):
     """
     下载 Steam 客户端并保存到指定文件名
     """
     steam_download_url = (
         "https://media.cdn.queniuqe.com/client/installer/SteamSetup.exe"
     )
-
-    def download_file(url, local_filename):
-        """
-        从指定 URL 下载文件并保存到本地文件
-        """
-        response = requests.get(url, stream=True)
-        response.raise_for_status()
-
-        with open(local_filename, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-
-        show_message("下载完成", f"下载完成：{local_filename}")
 
     download_file(steam_download_url, local_filename)
 
@@ -55,5 +58,5 @@ def show_message(title, message):
 
 
 if __name__ == "__main__":
-    download_steam("SteamSetup.exe")
-    install_steam("SteamSetup.exe")
+    download_steam(STEAM_SETUP)
+    install_steam(STEAM_SETUP)
